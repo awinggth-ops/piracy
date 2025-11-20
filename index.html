@@ -3,312 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield Integrity Checker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Integritas File // Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --primary: #00f2ff;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #e2e8f0;
-            --danger: #ff4757;
-            --success: #2ed573;
-        }
-
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; outline: none; }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
-            color: var(--text);
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0f172a;
+            color: white;
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        .container {
-            background: var(--card-bg);
+        /* --- ANIMATED BACKGROUND (AURORA) --- */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b, #000);
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4f46e5; animation-delay: 0s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #c026d3; animation-delay: 2s; }
+        .blob-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: #06b6d4; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* --- GLASS CARD --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
             width: 100%;
-            max-width: 500px;
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
-            transition: transform 0.3s;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-
-        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
-
-        /* Upload Area Styling */
-        .upload-zone {
-            border: 2px dashed #475569;
-            border-radius: 12px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(0,0,0,0.2);
             position: relative;
             overflow: hidden;
         }
-
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(0, 242, 255, 0.05);
+        
+        /* Shine Effect */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-25deg);
+            transition: 0.5s;
         }
+        .glass-card:hover::before { left: 150%; transition: 0.7s; }
 
-        .icon-cloud {
-            font-size: 3rem;
-            color: #64748b;
-            margin-bottom: 10px;
-            transition: color 0.3s;
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
         }
+        
+        p.subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; }
 
-        .upload-zone:hover .icon-cloud { color: var(--primary); }
-
-        /* Tombol */
-        .btn-scan {
-            background: linear-gradient(45deg, #2563eb, #00f2ff);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-top: 20px;
+        /* --- UPLOAD ZONE --- */
+        .upload-box {
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 2.5rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .upload-box:hover, .upload-box.dragover {
+            border-color: #818cf8;
+            background: rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .icon-wrapper {
+            width: 64px; height: 64px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+            color: #818cf8;
+            font-size: 1.5rem;
+        }
+
+        .file-name { font-weight: 500; color: white; margin-top: 10px; display: block; }
+        .file-meta { font-size: 0.8rem; color: #64748b; }
+
+        /* --- BUTTON --- */
+        .btn-primary {
             width: 100%;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-            transition: transform 0.2s;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
         }
-
-        .btn-scan:hover { transform: translateY(-2px); }
-        .btn-scan:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-
-        /* Animation & Result */
-        .scanner-ui { display: none; margin-top: 20px; text-align: left; }
-        
-        .progress-container {
-            height: 6px;
-            background: #334155;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 10px;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
         }
-        
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.1s;
-            box-shadow: 0 0 10px var(--primary);
-        }
+        .btn-primary:disabled { opacity: 0.6; cursor: wait; transform: none; }
 
-        .log-text {
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            color: var(--primary);
-            min-height: 1.2em;
-        }
-
-        .result-box {
+        /* --- RESULTS --- */
+        .result-card {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: left;
             display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid;
-            animation: slideUp 0.5s ease;
-        }
-
-        .result-box.safe {
-            background: rgba(46, 213, 115, 0.1);
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .result-box.danger {
-            background: rgba(255, 71, 87, 0.1);
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .hash-display {
-            background: rgba(0,0,0,0.3);
-            padding: 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: #cbd5e1;
-            word-break: break-all;
-            margin-top: 10px;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .verified { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .hash-box {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            word-break: break-all;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Loader */
+        .loader {
+            height: 4px;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+        .loader-bar {
+            height: 100%;
+            background: #4f46e5;
+            width: 0%;
+            transition: width 0.1s;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
-    <h1>CyberShield Detector</h1>
-    <p>Analisis integritas file menggunakan algoritma SHA-256 lokal.</p>
-    
-    <div class="upload-zone" id="dropZone">
-        <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this)">
-        <i class="fas fa-cloud-upload-alt icon-cloud"></i>
-        <h3 id="fileNameDisplay">Drag & Drop atau Klik Upload</h3>
-        <span style="font-size: 0.8rem; color: #64748b;" id="fileSizeDisplay">Mendukung .EXE, .ZIP, .DLL</span>
+    <div class="bg-glow">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <button class="btn-scan" onclick="startScan()" id="scanBtn">Scan File</button>
-    
-    <div class="scanner-ui" id="scannerUI">
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+    <div class="glass-card">
+        <div style="margin-bottom: 1.5rem;">
+            <i class="fa-solid fa-fingerprint" style="font-size: 2.5rem; background: -webkit-linear-gradient(45deg, #4f46e5, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
         </div>
-        <div class="log-text" id="logText">Initializing...</div>
-    </div>
+        <h1>File Integrity</h1>
+        <p class="subtitle">Verifikasi keaslian software Anda dengan teknologi SHA-256. Aman, cepat, tanpa upload ke server.</p>
 
-    <div id="resultDisplay" class="result-box"></div>
-</div>
+        <div class="upload-box" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" hidden onchange="handleFile(this.files[0])">
+            <div class="icon-wrapper"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <span class="file-name" id="fileName">Klik atau Drop File Disini</span>
+            <span class="file-meta" id="fileMeta">Support .EXE, .ZIP, .ISO</span>
+        </div>
+
+        <div class="loader" id="loader"><div class="loader-bar" id="loaderBar"></div></div>
+        
+        <button class="btn-primary" id="scanBtn" onclick="processScan()">Scan File Sekarang</button>
+
+        <div class="result-card" id="resultCard">
+            </div>
+    </div>
 
 <script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    
-    // Database Simulasi (Hash yang "Dianggap" Aman)
     const OFFICIAL_DB = {
-        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test Kosong (Original)",
-        // Tambahkan hash file asli lain di sini jika mau
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test (Empty)",
     };
 
-    // 1. Logic Drag & Drop
-    dropZone.addEventListener('click', () => fileInput.click());
-    
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-    });
+    let selectedFile = null;
 
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+    // Drag & Drop Logic
+    const dropZone = document.getElementById('dropZone');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
+    });
 
     dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', handleDrop);
-
-    function handleDrop(e) {
+    dropZone.addEventListener('drop', (e) => {
         dropZone.classList.remove('dragover');
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        fileInput.files = files;
-        handleFileSelect(fileInput);
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    function handleFile(file) {
+        if(!file) return;
+        selectedFile = file;
+        
+        // UI Update
+        document.getElementById('fileName').innerText = file.name;
+        const size = (file.size / (1024*1024)).toFixed(2);
+        document.getElementById('fileMeta').innerText = `${size} MB | ${file.type || 'Unknown Type'}`;
+        
+        // Reset UI
+        document.getElementById('resultCard').style.display = 'none';
+        document.getElementById('scanBtn').innerText = "Scan File Sekarang";
+        document.getElementById('loader').style.display = 'none';
     }
 
-    function handleFileSelect(input) {
-        if(input.files.length > 0) {
-            const file = input.files[0];
-            // Update tampilan nama file dan ukuran
-            document.getElementById('fileNameDisplay').innerText = file.name;
-            document.getElementById('fileSizeDisplay').innerText = formatBytes(file.size);
-            // Reset UI
-            document.getElementById('resultDisplay').style.display = 'none';
-            document.getElementById('scannerUI').style.display = 'none';
-        }
-    }
-
-    // 2. Logic Animasi & Scanning
-    async function startScan() {
-        if (fileInput.files.length === 0) {
-            alert("Pilih file dulu!");
+    async function processScan() {
+        if(!selectedFile) {
+            shakeCard();
             return;
         }
 
-        const ui = document.getElementById('scannerUI');
-        const bar = document.getElementById('progressBar');
-        const log = document.getElementById('logText');
         const btn = document.getElementById('scanBtn');
-        const resultBox = document.getElementById('resultDisplay');
-
-        // Reset
-        ui.style.display = 'block';
-        resultBox.style.display = 'none';
-        btn.disabled = true;
-        bar.style.width = "0%";
-
-        // Simulasi Loading (Agar terlihat canggih)
-        const logs = ["Membaca Header...", "Ekstraksi Signature...", "Menghitung SHA-256...", "Mencocokkan Database..."];
+        const loader = document.getElementById('loader');
+        const bar = document.getElementById('loaderBar');
         
-        for (let i = 0; i <= 100; i+=5) {
-            bar.style.width = i + "%";
-            if(i % 25 === 0 && i < 100) {
-                log.innerText = logs[i/25];
-            }
-            await new Promise(r => setTimeout(r, 30)); // Delay palsu 30ms
+        // UI Loading State
+        btn.disabled = true;
+        btn.innerText = "Menganalisis...";
+        loader.style.display = 'block';
+        
+        // Simulasi Animasi Loading
+        for(let i=0; i<=100; i+=2) {
+            bar.style.width = i + '%';
+            await new Promise(r => setTimeout(r, 10));
         }
 
-        // Proses Hash Asli
         try {
-            const file = fileInput.files[0];
-            const arrayBuffer = await file.arrayBuffer();
+            // Hashing Process
+            const arrayBuffer = await selectedFile.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            // Tampilkan Hasil
-            showResult(hashHex, OFFICIAL_DB[hashHex]);
-            
-        } catch (error) {
-            log.innerText = "Error: " + error;
+            showResult(hashHex);
+        } catch(e) {
+            alert("Error: " + e);
         } finally {
             btn.disabled = false;
+            btn.innerText = "Scan File Lain";
         }
     }
 
-    function showResult(hash, originalName) {
-        const box = document.getElementById('resultDisplay');
-        const log = document.getElementById('logText');
+    function showResult(hash) {
+        const card = document.getElementById('resultCard');
+        const match = OFFICIAL_DB[hash];
         
-        log.innerText = "Selesai.";
-
-        if (originalName) {
-            box.className = "result-box safe";
-            box.innerHTML = `
-                <i class="fas fa-check-circle"></i> <strong>VERIFIED ORIGINAL</strong><br>
-                <div style="margin-top:5px; font-size:0.9rem;">Terdeteksi sebagai: ${originalName}</div>
-                <div class="hash-display">SHA256: ${hash}</div>
+        if(match) {
+            card.style.background = "rgba(34, 197, 94, 0.1)";
+            card.innerHTML = `
+                <div class="status-badge verified"><i class="fa-solid fa-check"></i> ORIGINAL</div>
+                <h3 style="margin:0 0 5px 0; font-size:1.1rem;">${match}</h3>
+                <p style="margin:0; font-size:0.9rem; color:#cbd5e1;">File ini terdaftar di database resmi.</p>
+                <div class="hash-box">${hash}</div>
             `;
         } else {
-            box.className = "result-box danger";
-            box.innerHTML = `
-                <i class="fas fa-exclamation-triangle"></i> <strong>UNKNOWN / SUSPICIOUS</strong><br>
-                <div style="margin-top:5px; font-size:0.9rem;">Signature file tidak dikenal. Hati-hati!</div>
-                <div class="hash-display">SHA256: ${hash}</div>
+            card.style.background = "rgba(239, 68, 68, 0.1)";
+            card.innerHTML = `
+                <div class="status-badge danger"><i class="fa-solid fa-triangle-exclamation"></i> MENCURIGAKAN</div>
+                <h3 style="margin:0 0 5px 0; font-size:1.1rem;">Tidak Dikenal</h3>
+                <p style="margin:0; font-size:0.9rem; color:#cbd5e1;">Hash file tidak ditemukan di database. Berisiko modifikasi/crack.</p>
+                <div class="hash-box">${hash}</div>
             `;
         }
-        box.style.display = 'block';
+        card.style.display = 'block';
     }
 
-    function formatBytes(bytes, decimals = 2) {
-        if (!+bytes) return '0 Bytes';
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    function shakeCard() {
+        const card = document.querySelector('.glass-card');
+        card.style.transform = 'translateX(10px)';
+        setTimeout(() => card.style.transform = 'translateX(-10px)', 100);
+        setTimeout(() => card.style.transform = 'translateX(0)', 200);
     }
 </script>
 
