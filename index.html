@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Keaslian File (Versi GitHub)</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+        h2 { margin-top: 0; color: #1a1a1a; }
+        .upload-area { border: 2px dashed #ccc; padding: 20px; border-radius: 8px; margin: 20px 0; cursor: pointer; transition: 0.3s; }
+        .upload-area:hover { border-color: #007bff; background: #f8f9fa; }
+        button { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; }
+        button:disabled { background: #ccc; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: left; }
+        .safe { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .hash-code { font-family: monospace; word-break: break-all; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🛡️ File Integrity Checker</h2>
+    <p>Cek apakah file software kamu asli atau sudah dimodifikasi (crack/bajakan).</p>
+    
+    <div class="upload-area">
+        <input type="file" id="fileInput" style="display: none;" onchange="updateFileName()">
+        <label for="fileInput" style="cursor: pointer;">
+            <div id="fileName">Klik untuk pilih file (.exe, .zip)</div>
+        </label>
+    </div>
+
+    <button onclick="processFile()" id="btnScan">Scan Sekarang</button>
+    
+    <div id="result"></div>
+</div>
+
+<script>
+    // --- DATABASE SIMULASI ---
+    // Di dunia nyata, ini harusnya database raksasa yang diambil via API.
+    // Di sini kita pakai database lokal sederhana untuk demo.
+    const OFFICIAL_HASHES = {
+        // Hash file kosong (untuk tes user)
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test (Original)",
+        
+        // Contoh Hash Windows 11 Setup (Simulasi)
+        "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0": "Windows 11 Setup.exe",
+        
+        // Contoh Hash Game Valheim (Simulasi)
+        "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0": "Valheim.exe (Steam Version)"
+    };
+
+    function updateFileName() {
+        const input = document.getElementById('fileInput');
+        const display = document.getElementById('fileName');
+        if (input.files.length > 0) {
+            display.innerText = "File: " + input.files[0].name;
+        }
+    }
+
+    async function processFile() {
+        const input = document.getElementById('fileInput');
+        const resultDiv = document.getElementById('result');
+        const btn = document.getElementById('btnScan');
+
+        if (input.files.length === 0) {
+            alert("Pilih file dulu bos!");
+            return;
+        }
+
+        // Reset UI
+        resultDiv.style.display = 'none';
+        btn.innerText = "Sedang Menganalisis...";
+        btn.disabled = true;
+
+        try {
+            const file = input.files[0];
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // Hitung SHA-256 menggunakan Crypto API browser
+            const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // Cek Database
+            const isOfficial = OFFICIAL_HASHES.hasOwnProperty(hashHex);
+
+            resultDiv.style.display = 'block';
+            if (isOfficial) {
+                resultDiv.className = 'safe';
+                resultDiv.innerHTML = `
+                    <strong>✅ TERVERIFIKASI ASLI</strong><br>
+                    Terdeteksi sebagai: ${OFFICIAL_HASHES[hashHex]}<br>
+                    <small class="hash-code">Hash: ${hashHex}</small>
+                `;
+            } else {
+                resultDiv.className = 'danger';
+                resultDiv.innerHTML = `
+                    <strong>⚠️ MENCURIGAKAN / TIDAK DIKENAL</strong><br>
+                    Hash file ini tidak ada di database resmi kami. Kemungkinan file bajakan atau modifikasi.<br>
+                    <small class="hash-code">Hash: ${hashHex}</small>
+                `;
+            }
+
+        } catch (error) {
+            alert("Gagal memproses file: " + error);
+        } finally {
+            btn.innerText = "Scan Sekarang";
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
