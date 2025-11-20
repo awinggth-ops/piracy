@@ -358,6 +358,33 @@
         setTimeout(() => card.style.transform = 'translateX(-10px)', 100);
         setTimeout(() => card.style.transform = 'translateX(0)', 200);
     }
+    function showResult(hash) {
+        const card = document.getElementById('resultCard');
+        const match = OFFICIAL_DB[hash];
+        
+        if(match) {
+            // JIKA ASLI
+            card.style.background = "rgba(34, 197, 94, 0.1)";
+            card.innerHTML = `
+                <div class="status-badge verified"><i class="fa-solid fa-check"></i> ORIGINAL</div>
+                <h3 style="margin:0 0 5px 0; font-size:1.1rem;">${match}</h3>
+                <p style="margin:0; font-size:0.9rem; color:#cbd5e1;">File ini terdaftar di database resmi.</p>
+                <div class="hash-box">${hash}</div>
+            `;
+        } else {
+            // JIKA TIDAK DIKENAL
+            card.style.background = "rgba(239, 68, 68, 0.1)";
+            card.innerHTML = `
+                <div class="status-badge danger"><i class="fa-solid fa-triangle-exclamation"></i> TIDAK DIKENAL</div>
+                <h3 style="margin:0 0 5px 0; font-size:1.1rem;">Database Belum Mencatat</h3>
+                <p style="margin:0; font-size:0.9rem; color:#cbd5e1;">
+                    Jika Anda yakin file ini ASLI, silakan copy hash di bawah dan masukkan ke source code (OFFICIAL_DB).
+                </p>
+                <div class="hash-box" style="user-select: all; cursor: pointer;" title="Klik untuk Copy" onclick="navigator.clipboard.writeText('${hash}'); alert('Hash disalin!')">${hash} <i class="fa-solid fa-copy" style="float:right; margin-top:3px;"></i></div>
+            `;
+        }
+        card.style.display = 'block';
+    }
 </script>
 
 </body>
