@@ -3,114 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Keaslian File (Versi GitHub)</title>
+    <title>CyberShield Integrity Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
-        h2 { margin-top: 0; color: #1a1a1a; }
-        .upload-area { border: 2px dashed #ccc; padding: 20px; border-radius: 8px; margin: 20px 0; cursor: pointer; transition: 0.3s; }
-        .upload-area:hover { border-color: #007bff; background: #f8f9fa; }
-        button { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; }
-        button:disabled { background: #ccc; }
-        #result { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: left; }
-        .safe { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .hash-code { font-family: monospace; word-break: break-all; font-size: 0.85rem; }
+        :root {
+            --primary: #00f2ff;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --danger: #ff4757;
+            --success: #2ed573;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+
+        /* Upload Area Styling */
+        .upload-zone {
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .icon-cloud {
+            font-size: 3rem;
+            color: #64748b;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .upload-zone:hover .icon-cloud { color: var(--primary); }
+
+        /* Tombol */
+        .btn-scan {
+            background: linear-gradient(45deg, #2563eb, #00f2ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-scan:hover { transform: translateY(-2px); }
+        .btn-scan:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        /* Animation & Result */
+        .scanner-ui { display: none; margin-top: 20px; text-align: left; }
+        
+        .progress-container {
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.1s;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .log-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--primary);
+            min-height: 1.2em;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            animation: slideUp 0.5s ease;
+        }
+
+        .result-box.safe {
+            background: rgba(46, 213, 115, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .result-box.danger {
+            background: rgba(255, 71, 87, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .hash-display {
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>🛡️ File Integrity Checker</h2>
-    <p>Cek apakah file software kamu asli atau sudah dimodifikasi (crack/bajakan).</p>
+<div class="container">
+    <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+    <h1>CyberShield Detector</h1>
+    <p>Analisis integritas file menggunakan algoritma SHA-256 lokal.</p>
     
-    <div class="upload-area">
-        <input type="file" id="fileInput" style="display: none;" onchange="updateFileName()">
-        <label for="fileInput" style="cursor: pointer;">
-            <div id="fileName">Klik untuk pilih file (.exe, .zip)</div>
-        </label>
+    <div class="upload-zone" id="dropZone">
+        <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this)">
+        <i class="fas fa-cloud-upload-alt icon-cloud"></i>
+        <h3 id="fileNameDisplay">Drag & Drop atau Klik Upload</h3>
+        <span style="font-size: 0.8rem; color: #64748b;" id="fileSizeDisplay">Mendukung .EXE, .ZIP, .DLL</span>
     </div>
 
-    <button onclick="processFile()" id="btnScan">Scan Sekarang</button>
+    <button class="btn-scan" onclick="startScan()" id="scanBtn">Scan File</button>
     
-    <div id="result"></div>
+    <div class="scanner-ui" id="scannerUI">
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="log-text" id="logText">Initializing...</div>
+    </div>
+
+    <div id="resultDisplay" class="result-box"></div>
 </div>
 
 <script>
-    // --- DATABASE SIMULASI ---
-    // Di dunia nyata, ini harusnya database raksasa yang diambil via API.
-    // Di sini kita pakai database lokal sederhana untuk demo.
-    const OFFICIAL_HASHES = {
-        // Hash file kosong (untuk tes user)
-        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test (Original)",
-        
-        // Contoh Hash Windows 11 Setup (Simulasi)
-        "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0": "Windows 11 Setup.exe",
-        
-        // Contoh Hash Game Valheim (Simulasi)
-        "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0": "Valheim.exe (Steam Version)"
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Database Simulasi (Hash yang "Dianggap" Aman)
+    const OFFICIAL_DB = {
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test Kosong (Original)",
+        // Tambahkan hash file asli lain di sini jika mau
     };
 
-    function updateFileName() {
-        const input = document.getElementById('fileInput');
-        const display = document.getElementById('fileName');
-        if (input.files.length > 0) {
-            display.innerText = "File: " + input.files[0].name;
+    // 1. Logic Drag & Drop
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', handleDrop);
+
+    function handleDrop(e) {
+        dropZone.classList.remove('dragover');
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        handleFileSelect(fileInput);
+    }
+
+    function handleFileSelect(input) {
+        if(input.files.length > 0) {
+            const file = input.files[0];
+            // Update tampilan nama file dan ukuran
+            document.getElementById('fileNameDisplay').innerText = file.name;
+            document.getElementById('fileSizeDisplay').innerText = formatBytes(file.size);
+            // Reset UI
+            document.getElementById('resultDisplay').style.display = 'none';
+            document.getElementById('scannerUI').style.display = 'none';
         }
     }
 
-    async function processFile() {
-        const input = document.getElementById('fileInput');
-        const resultDiv = document.getElementById('result');
-        const btn = document.getElementById('btnScan');
-
-        if (input.files.length === 0) {
-            alert("Pilih file dulu bos!");
+    // 2. Logic Animasi & Scanning
+    async function startScan() {
+        if (fileInput.files.length === 0) {
+            alert("Pilih file dulu!");
             return;
         }
 
-        // Reset UI
-        resultDiv.style.display = 'none';
-        btn.innerText = "Sedang Menganalisis...";
-        btn.disabled = true;
+        const ui = document.getElementById('scannerUI');
+        const bar = document.getElementById('progressBar');
+        const log = document.getElementById('logText');
+        const btn = document.getElementById('scanBtn');
+        const resultBox = document.getElementById('resultDisplay');
 
+        // Reset
+        ui.style.display = 'block';
+        resultBox.style.display = 'none';
+        btn.disabled = true;
+        bar.style.width = "0%";
+
+        // Simulasi Loading (Agar terlihat canggih)
+        const logs = ["Membaca Header...", "Ekstraksi Signature...", "Menghitung SHA-256...", "Mencocokkan Database..."];
+        
+        for (let i = 0; i <= 100; i+=5) {
+            bar.style.width = i + "%";
+            if(i % 25 === 0 && i < 100) {
+                log.innerText = logs[i/25];
+            }
+            await new Promise(r => setTimeout(r, 30)); // Delay palsu 30ms
+        }
+
+        // Proses Hash Asli
         try {
-            const file = input.files[0];
+            const file = fileInput.files[0];
             const arrayBuffer = await file.arrayBuffer();
-            
-            // Hitung SHA-256 menggunakan Crypto API browser
             const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            // Cek Database
-            const isOfficial = OFFICIAL_HASHES.hasOwnProperty(hashHex);
-
-            resultDiv.style.display = 'block';
-            if (isOfficial) {
-                resultDiv.className = 'safe';
-                resultDiv.innerHTML = `
-                    <strong>✅ TERVERIFIKASI ASLI</strong><br>
-                    Terdeteksi sebagai: ${OFFICIAL_HASHES[hashHex]}<br>
-                    <small class="hash-code">Hash: ${hashHex}</small>
-                `;
-            } else {
-                resultDiv.className = 'danger';
-                resultDiv.innerHTML = `
-                    <strong>⚠️ MENCURIGAKAN / TIDAK DIKENAL</strong><br>
-                    Hash file ini tidak ada di database resmi kami. Kemungkinan file bajakan atau modifikasi.<br>
-                    <small class="hash-code">Hash: ${hashHex}</small>
-                `;
-            }
-
+            // Tampilkan Hasil
+            showResult(hashHex, OFFICIAL_DB[hashHex]);
+            
         } catch (error) {
-            alert("Gagal memproses file: " + error);
+            log.innerText = "Error: " + error;
         } finally {
-            btn.innerText = "Scan Sekarang";
             btn.disabled = false;
         }
+    }
+
+    function showResult(hash, originalName) {
+        const box = document.getElementById('resultDisplay');
+        const log = document.getElementById('logText');
+        
+        log.innerText = "Selesai.";
+
+        if (originalName) {
+            box.className = "result-box safe";
+            box.innerHTML = `
+                <i class="fas fa-check-circle"></i> <strong>VERIFIED ORIGINAL</strong><br>
+                <div style="margin-top:5px; font-size:0.9rem;">Terdeteksi sebagai: ${originalName}</div>
+                <div class="hash-display">SHA256: ${hash}</div>
+            `;
+        } else {
+            box.className = "result-box danger";
+            box.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> <strong>UNKNOWN / SUSPICIOUS</strong><br>
+                <div style="margin-top:5px; font-size:0.9rem;">Signature file tidak dikenal. Hati-hati!</div>
+                <div class="hash-display">SHA256: ${hash}</div>
+            `;
+        }
+        box.style.display = 'block';
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+        if (!+bytes) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 </script>
 
 </body>
 </html>
+      
