@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integritas File Pro // Security & Gaming Suite</title>
+    <title>Integritas File Pro // Security & Gaming & Media Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -20,6 +20,7 @@
             --success: #22c55e;
             --coolrom: #3b82f6;   /* Blue for CoolROM */
             --youtube: #ef4444;   /* Red for YouTube */
+            --tiktok: #fe2c55;    /* TikTok Pink/Red */
         }
 
         * { box-sizing: border-box; outline: none; user-select: none; }
@@ -301,6 +302,9 @@
         .yt-preview img { width: 100%; border-radius: 8px; margin-bottom: 8px; aspect-ratio: 16/9; object-fit: cover; }
         .yt-title-badge { font-size: 0.7rem; background: var(--youtube); color: #fff; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
         .yt-status { font-size: 0.8rem; color: #fff; }
+        
+        /* TIKTOK STYLE SPECIFIC */
+        .tiktok-badge { font-size: 0.7rem; background: var(--tiktok); color: #fff; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -311,18 +315,15 @@
     </div>
 
     <div class="app-container">
-        <!-- Top Buttons -->
         <div class="top-actions">
             <button class="btn-icon" onclick="togglePanel('toolsPanel')" title="Tools & Search"><i class="fa-solid fa-toolbox"></i></button>
             <button class="btn-icon" onclick="togglePanel('settingsPanel')" title="Pengaturan"><i class="fa-solid fa-gear"></i></button>
         </div>
 
-        <!-- TOOLS PANEL -->
         <div class="side-panel" id="toolsPanel">
             <i class="fa-solid fa-xmark panel-close" onclick="togglePanel('toolsPanel')"></i>
-            <h3 class="panel-header"><i class="fa-solid fa-toolbox"></i> Tools & Pencarian</h3>
+            <h3 class="panel-header"><i class="fa-solid fa-toolbox"></i> Media & Tools</h3>
 
-            <!-- YOUTUBE SECTION -->
             <div style="color: var(--youtube); margin-bottom: 10px; font-weight: 600; font-size: 0.9rem;">
                 <i class="fa-brands fa-youtube"></i> YouTube Tools
             </div>
@@ -330,7 +331,6 @@
                 <input type="text" id="ytInput" class="input-field" placeholder="Paste Link YouTube / Judul Lagu..." oninput="detectYoutube(this.value)">
             </div>
 
-            <!-- THUMBNAIL PREVIEW AREA -->
             <div class="yt-preview" id="ytPreview">
                 <div class="yt-title-badge"><i class="fa-brands fa-youtube"></i> Video Detected</div>
                 <img id="ytThumb" src="" alt="Thumbnail">
@@ -338,13 +338,31 @@
             </div>
 
             <div class="panel-actions" id="ytButtons">
-                <!-- Default Button -->
                 <button class="btn-xs" style="background:rgba(239, 68, 68, 0.2); color:#fca5a5;" onclick="openYtTool('search')">
                     <i class="fa-solid fa-magnifying-glass"></i> Cari di YouTube
                 </button>
             </div>
 
-            <!-- COOLROM SECTION -->
+            <div style="color: var(--tiktok); margin-top: 30px; margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <i class="fa-brands fa-tiktok"></i> TikTok Downloader
+            </div>
+            <div class="input-group">
+                <input type="text" id="tiktokInput" class="input-field" placeholder="Paste Link TikTok..." oninput="detectTikTok(this.value)">
+            </div>
+
+            <div class="yt-preview" id="tiktokPreview" style="display:none;">
+                <div class="tiktok-badge"><i class="fa-brands fa-tiktok"></i> Link Terdeteksi</div>
+                <div class="yt-status" style="margin-top:5px; font-size:0.75rem; color:#94a3b8; line-height:1.4">Link akan otomatis disalin saat Anda memilih server di bawah ini.</div>
+                <div class="panel-actions">
+                    <button class="btn-xs" style="background:#2563eb;" onclick="openTikTokService('snaptik')">
+                        <i class="fa-solid fa-download"></i> SnapTik
+                    </button>
+                    <button class="btn-xs" style="background:#16a34a;" onclick="openTikTokService('ssstik')">
+                        <i class="fa-solid fa-file-arrow-down"></i> SSSTik
+                    </button>
+                </div>
+            </div>
+
             <div style="color: var(--coolrom); margin-top: 30px; margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
                 <i class="fa-solid fa-gamepad"></i> Game & Emulator
             </div>
@@ -361,12 +379,10 @@
             </div>
         </div>
 
-        <!-- SETTINGS PANEL -->
         <div class="side-panel" id="settingsPanel">
             <i class="fa-solid fa-xmark panel-close" onclick="togglePanel('settingsPanel')"></i>
             <h3 class="panel-header"><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
             
-            <!-- AUTO SAVE TOGGLE -->
             <div class="toggle-wrapper">
                 <div>
                     <div class="toggle-label">Auto-Simpan File Baru</div>
@@ -378,7 +394,6 @@
                 </label>
             </div>
 
-            <!-- DB SETTINGS -->
             <div class="section-header"><i class="fa-brands fa-github"></i> Database Eksternal</div>
             <div class="input-group">
                 <input type="text" id="githubUrl" class="input-field" placeholder="https://raw.githubusercontent.com/user/repo/main/db.json">
@@ -391,14 +406,12 @@
             </div>
         </div>
 
-        <!-- Header -->
         <div class="header">
             <i class="fa-solid fa-shield-halved logo"></i>
             <h1>Integritas File Pro</h1>
             <div class="stats-badge" id="dbStats">Memuat Database...</div>
         </div>
 
-        <!-- Upload Zone -->
         <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
             <input type="file" id="fileInput" hidden onchange="handleFile(this.files[0])">
             <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
@@ -408,15 +421,12 @@
             </div>
         </div>
 
-        <!-- Progress -->
         <div class="progress-container" id="loader">
             <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <!-- Action Button -->
         <button class="btn-main" id="scanBtn" onclick="processScan()" disabled>Pilih File Dahulu</button>
 
-        <!-- Result Section -->
         <div class="result-box" id="resultArea"></div>
     </div>
 
@@ -436,6 +446,7 @@
         let currentFile = null;
         let currentHash = null;
         let currentYtId = null;
+        let currentTikTokUrl = null;
 
         const els = {
             dropZone: document.getElementById('dropZone'),
@@ -497,7 +508,36 @@
             localStorage.setItem('integrity_autosave_mode', els.autoSaveToggle.checked);
         }
 
-        // --- YOUTUBE LOGIC (IMPROVED) ---
+        // --- TIKTOK LOGIC (BARU) ---
+        function detectTikTok(val) {
+            val = val.trim();
+            const preview = document.getElementById('tiktokPreview');
+            currentTikTokUrl = null;
+
+            if (val.includes('tiktok.com')) {
+                currentTikTokUrl = val;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function openTikTokService(service) {
+            if (!currentTikTokUrl) return;
+            
+            // Copy to clipboard automatically
+            navigator.clipboard.writeText(currentTikTokUrl).then(() => {
+                alert("Link TikTok disalin! Silakan paste di web downloader.");
+            });
+
+            if (service === 'snaptik') {
+                window.open('https://snaptik.app', '_blank');
+            } else if (service === 'ssstik') {
+                 window.open('https://ssstik.io', '_blank');
+            }
+        }
+
+        // --- YOUTUBE LOGIC ---
         function detectYoutube(val) {
             val = val.trim();
             els.ytPreview.style.display = 'none';
@@ -542,8 +582,6 @@
                 window.open(`https://www.y2mate.com/youtube/${currentYtId}`, '_blank');
             } else if (service === 'savefrom') {
                 window.open(`https://en.savefrom.net/1-youtube-video-downloader-4/`, '_blank'); 
-                // Savefrom usually requires pasting the link manually now due to API changes, but direct URL tricks exist:
-                // window.open(`https://ssyoutube.com/watch?v=${currentYtId}`, '_blank'); // Shortlink trick
             }
         }
 
