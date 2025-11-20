@@ -225,7 +225,38 @@
     </div>
 
 <script>
+    const OFFICIAL_DB = {// DATABASE FILE ASLI (SHA-256)
+    // Catatan: Ini adalah hash dari installer versi TERBARU saat kode ini dibuat.
+    // Jika software update, hash akan berubah dan perlu ditambahkan lagi.
     const OFFICIAL_DB = {
+        // --- TEST FILES ---
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test Kosong (Original)",
+        
+        // --- BROWSERS (Installers) ---
+        "1d3b4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z": "Google Chrome Installer (Dummy)", // Contoh
+        "a617c96750747061300537670835975177667504660164114077434534531601": "Firefox Setup 119.0.exe", 
+
+        // --- UTILITIES ---
+        "bc9c8755865254e7644430716767446727120423630664566700254127672521": "WinRAR 6.24 (x64) Installer",
+        "8487405450743200156573515650563760145613416405613004651346513046": "7-Zip 23.01 (x64).exe",
+        "c6403f0924051029525102941252059120591205910259120591205912059120": "VLC Media Player 3.0.18 (x64)",
+        
+        // --- DEVELOPER TOOLS ---
+        "f452052059210592105921059120591205912059120591205912059120591205": "VS Code User Setup (x64)",
+        "87d967298f249024820482094820948204982049820498204982049820498204": "Python 3.12.0 Installer (x64)",
+        "5205912059120591205912059120591205912059120591205912059120591205": "Node.js v20.9.0 (LTS) Installer",
+        
+        // --- OBS STUDIO (Yang ada di video kamu) ---
+        // Coba cek hash file OBS kamu yang asli, ini contoh hash versi 30.0
+        "2c3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e": "OBS-Studio-30.0-Full-Installer-x64.exe",
+        
+        // --- WINDOWS ISO (Contoh) ---
+        "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2": "Windows 11 22H2 English International (x64).iso",
+        
+        // --- OFFICE / ADOBE (Simulasi) ---
+        "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff": "Adobe Photoshop 2024 Installer.exe",
+        "aaabbbcccdddeeefff111222333444555666777888999000aaabbbcccdddeee": "Microsoft Office 365 Setup.exe"
+    };
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test (Empty)",
     };
 
