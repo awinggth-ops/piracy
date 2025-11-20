@@ -80,6 +80,7 @@
             transition: 0.3s;
         }
         .upload-box:hover { border-color: #818cf8; background: rgba(79, 70, 229, 0.1); }
+        .upload-box.dragover { border-color: #818cf8; background: rgba(79, 70, 229, 0.1); } /* Add dragover style */
 
         .icon-wrapper { font-size: 2rem; color: #818cf8; margin-bottom: 10px; }
         .file-name { display: block; font-weight: 500; margin-top: 10px; }
@@ -168,50 +169,5 @@
     const OFFICIAL_DB = {
         // File Test (Empty File)
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": "File Test Kosong (Original)",
-
-        // Browser & Tools (Contoh Dummy)
-        "bc9c8755865254e7644430716767446727120423630664566700254127672521": "WinRAR 6.24 (x64)",
-        "2c3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e": "OBS Studio 30.0 Installer"
-        // Tambahkan koma di akhir baris di atas jika mau nambah baris baru di bawahnya!
-    };
-
-    let selectedFile = null;
-    const dropZone = document.getElementById('dropZone');
-
-    // --- EVENT LISTENER (Drag & Drop) ---
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-        dropZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
-    });
-
-    dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', (e) => {
-        handleFile(e.dataTransfer.files[0]);
-    });
-
-    function handleFile(file) {
-        if (!file) return;
-        selectedFile = file;
-        document.getElementById('fileName').innerText = file.name;
-        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        document.getElementById('fileMeta').innerText = `${sizeMB} MB | ${file.type || 'Unknown'}`;
-        
-        // Reset UI
-        document.getElementById('resultCard').style.display = 'none';
-        document.getElementById('scanBtn').innerText = "Mulai Scan";
-        document.getElementById('scanBtn').disabled = false;
-        document.getElementById('loader').style.display = 'none';
-    }
-
-    async function processScan() {
-        if (!selectedFile) {
-            alert("Pilih file dulu!");
-            return;
-        }
-
-        const btn = document.getElementById('scanBtn');
-        const loader = document.getElementById('loader');
-        const bar = document.getElementById('loaderBar');
-
-        btn.disabled = true;
-        btn.innerText =
+        // Browser & Tools (Contoh Dummy, jangan lupa koma jika menambah lagi)
+        "bc9c8755865254e7644430716767446727120423630664566700254127672521": "WinRAR
