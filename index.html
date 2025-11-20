@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integritas File Pro // Auto Save Mode</title>
+    <title>Integritas File Pro // Security & Gaming Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -18,6 +18,8 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --success: #22c55e;
+            --coolrom: #3b82f6;   /* Blue for CoolROM */
+            --youtube: #ef4444;   /* Red for YouTube */
         }
 
         * { box-sizing: border-box; outline: none; user-select: none; }
@@ -67,6 +69,7 @@
             text-align: center;
             animation: fadeIn 0.8s ease-out;
             transition: height 0.3s ease;
+            margin: 20px 0;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -87,22 +90,34 @@
             margin-top: 5px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* SETTINGS BUTTON & PANEL */
-        .btn-settings {
+        /* TOP RIGHT BUTTONS (GEAR & TOOLS) */
+        .top-actions {
             position: absolute; top: 20px; right: 20px;
-            color: var(--text-muted); cursor: pointer; font-size: 1.2rem;
-            transition: 0.3s; z-index: 10;
+            display: flex; gap: 15px; z-index: 10;
         }
-        .btn-settings:hover { color: #fff; transform: rotate(90deg); }
+        .btn-icon {
+            color: var(--text-muted); cursor: pointer; font-size: 1.2rem;
+            transition: 0.3s; background: transparent; border: none; padding: 5px;
+        }
+        .btn-icon:hover { color: #fff; transform: scale(1.1); }
+        .btn-icon.active { color: var(--primary); }
 
-        .settings-panel {
+        /* PANELS (SETTINGS & TOOLS) */
+        .side-panel {
             display: none; text-align: left;
-            background: rgba(15, 23, 42, 0.9); border: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.98); border: 1px solid var(--glass-border);
             border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem;
             animation: slideDown 0.3s ease-out;
+            position: absolute; width: 100%; left: 0; top: 0; z-index: 20; height: 100%;
+            overflow-y: auto; 
         }
-        .settings-panel.active { display: block; }
+        .side-panel.active { display: block; }
         
+        .panel-close { position: absolute; top: 20px; right: 20px; cursor: pointer; color: #fff; transition:0.2s; font-size: 1.2rem;}
+        .panel-close:hover { color: var(--primary); transform: rotate(90deg); }
+        
+        .panel-header { margin: 0 0 20px 0; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+
         .input-group { margin-bottom: 1rem; }
         .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; }
         .input-field {
@@ -133,11 +148,11 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        .settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .panel-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .btn-xs {
-            flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer;
-            font-size: 0.75rem; font-weight: 600; color: #fff; background: rgba(255,255,255,0.1);
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;
+            flex: 1; padding: 12px 10px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.8rem; font-weight: 600; color: #fff; background: rgba(255,255,255,0.1);
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-xs:hover { background: rgba(255,255,255,0.2); }
         .btn-xs.danger:hover { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
@@ -215,9 +230,77 @@
             border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-top: 8px;
         }
 
+        /* EXTERNAL BUTTONS */
+        .btn-external {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 12px; border-radius: 12px; border: none; margin-top: 10px;
+            color: white; font-weight: 600; text-decoration: none; cursor: pointer;
+            transition: 0.3s; font-size: 0.85rem;
+        }
+        .btn-external:hover { transform: translateY(-2px); }
+        
+        .vt-bg { background: #2563eb; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
+        .vt-bg:hover { background: #1d4ed8; }
+
+        .cr-bg { background: #0891b2; box-shadow: 0 4px 15px rgba(8, 145, 178, 0.2); }
+        .cr-bg:hover { background: #0e7490; }
+
+        .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+
+        /* KEBAB MENU (DROPDOWN) */
+        .kebab-container { position: relative; }
+        .btn-kebab {
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 1.2rem; cursor: pointer; padding: 5px 10px; border-radius: 50%;
+            transition: 0.2s;
+        }
+        .btn-kebab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        
+        .dropdown-menu {
+            display: none; position: absolute; right: 0; top: 35px;
+            background: #1e293b; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; min-width: 220px; z-index: 50;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;
+            animation: fadeScale 0.2s ease-out;
+        }
+        .dropdown-menu.show { display: block; }
+        
+        .dropdown-item {
+            display: flex; align-items: center; width: 100%; padding: 12px 15px;
+            color: #e2e8f0; text-decoration: none; font-size: 0.85rem;
+            background: transparent; border: none; cursor: pointer;
+            text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+        .dropdown-item:hover { background: rgba(99, 102, 241, 0.1); color: #fff; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item i { margin-right: 10px; width: 16px; text-align: center; color: var(--text-muted); }
+        .dropdown-item:hover i { color: var(--primary); }
+
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* SECTION HEADERS */
+        .section-header {
+            margin: 25px 0 15px 0; font-size: 0.85rem; color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-header i { color: #fff; }
+
+        /* --- YOUTUBE PREVIEW --- */
+        .yt-preview {
+            display: none; margin-top: 10px; background: rgba(0,0,0,0.3);
+            border-radius: 10px; overflow: hidden; padding: 10px; border: 1px solid var(--glass-border);
+        }
+        .yt-preview img { width: 100%; border-radius: 8px; margin-bottom: 8px; aspect-ratio: 16/9; object-fit: cover; }
+        .yt-title-badge { font-size: 0.7rem; background: var(--youtube); color: #fff; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        .yt-status { font-size: 0.8rem; color: #fff; }
     </style>
 </head>
 <body>
@@ -228,12 +311,60 @@
     </div>
 
     <div class="app-container">
-        <!-- Settings Toggle -->
-        <i class="fa-solid fa-gear btn-settings" onclick="toggleSettings()" title="Pengaturan Database"></i>
+        <!-- Top Buttons -->
+        <div class="top-actions">
+            <button class="btn-icon" onclick="togglePanel('toolsPanel')" title="Tools & Search"><i class="fa-solid fa-toolbox"></i></button>
+            <button class="btn-icon" onclick="togglePanel('settingsPanel')" title="Pengaturan"><i class="fa-solid fa-gear"></i></button>
+        </div>
 
-        <!-- Settings Panel -->
-        <div class="settings-panel" id="settingsPanel">
-            <h3 style="margin:0 0 15px 0; font-size:1rem;"><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
+        <!-- TOOLS PANEL -->
+        <div class="side-panel" id="toolsPanel">
+            <i class="fa-solid fa-xmark panel-close" onclick="togglePanel('toolsPanel')"></i>
+            <h3 class="panel-header"><i class="fa-solid fa-toolbox"></i> Tools & Pencarian</h3>
+
+            <!-- YOUTUBE SECTION -->
+            <div style="color: var(--youtube); margin-bottom: 10px; font-weight: 600; font-size: 0.9rem;">
+                <i class="fa-brands fa-youtube"></i> YouTube Tools
+            </div>
+            <div class="input-group">
+                <input type="text" id="ytInput" class="input-field" placeholder="Paste Link YouTube / Judul Lagu..." oninput="detectYoutube(this.value)">
+            </div>
+
+            <!-- THUMBNAIL PREVIEW AREA -->
+            <div class="yt-preview" id="ytPreview">
+                <div class="yt-title-badge"><i class="fa-brands fa-youtube"></i> Video Detected</div>
+                <img id="ytThumb" src="" alt="Thumbnail">
+                <div class="yt-status" id="ytStatus">Siap untuk didownload</div>
+            </div>
+
+            <div class="panel-actions" id="ytButtons">
+                <!-- Default Button -->
+                <button class="btn-xs" style="background:rgba(239, 68, 68, 0.2); color:#fca5a5;" onclick="openYtTool('search')">
+                    <i class="fa-solid fa-magnifying-glass"></i> Cari di YouTube
+                </button>
+            </div>
+
+            <!-- COOLROM SECTION -->
+            <div style="color: var(--coolrom); margin-top: 30px; margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <i class="fa-solid fa-gamepad"></i> Game & Emulator
+            </div>
+            <div class="input-group">
+                <input type="text" id="manualSearchInput" class="input-field" placeholder="Nama Game / Konsol (misal: PS2)...">
+            </div>
+            <div class="panel-actions">
+                <button class="btn-xs" style="background:rgba(59, 130, 246, 0.2); color:#93c5fd;" onclick="manualSearch('game')">
+                    <i class="fa-solid fa-search"></i> Cari Game
+                </button>
+                <button class="btn-xs" style="background:rgba(255,255,255,0.1);" onclick="manualSearch('emulator')">
+                    <i class="fa-solid fa-microchip"></i> Cari Emulator
+                </button>
+            </div>
+        </div>
+
+        <!-- SETTINGS PANEL -->
+        <div class="side-panel" id="settingsPanel">
+            <i class="fa-solid fa-xmark panel-close" onclick="togglePanel('settingsPanel')"></i>
+            <h3 class="panel-header"><i class="fa-solid fa-sliders"></i> Pengaturan</h3>
             
             <!-- AUTO SAVE TOGGLE -->
             <div class="toggle-wrapper">
@@ -247,14 +378,15 @@
                 </label>
             </div>
 
-            <h4 style="margin:15px 0 10px 0; font-size:0.85rem; color: var(--text-muted);">Database Eksternal (GitHub)</h4>
+            <!-- DB SETTINGS -->
+            <div class="section-header"><i class="fa-brands fa-github"></i> Database Eksternal</div>
             <div class="input-group">
                 <input type="text" id="githubUrl" class="input-field" placeholder="https://raw.githubusercontent.com/user/repo/main/db.json">
             </div>
 
-            <div class="settings-actions">
-                <button class="btn-xs" onclick="loadGithubDB()"><i class="fa-solid fa-rotate"></i> Update URL</button>
-                <button class="btn-xs success" onclick="exportLocalDB()"><i class="fa-solid fa-download"></i> Backup DB</button>
+            <div class="panel-actions">
+                <button class="btn-xs" onclick="loadGithubDB()"><i class="fa-solid fa-rotate"></i> Update</button>
+                <button class="btn-xs success" onclick="exportLocalDB()"><i class="fa-solid fa-download"></i> Backup</button>
                 <button class="btn-xs danger" onclick="clearLocalDB()"><i class="fa-solid fa-trash"></i> Reset</button>
             </div>
         </div>
@@ -297,9 +429,13 @@
             "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": "File Teks 'hello' (Sample)"
         };
 
+        // Daftar Ekstensi Game
+        const GAME_EXTENSIONS = ['iso', 'cso', 'bin', 'img', 'rom', 'nds', 'gba', 'nes', 'sfc', 'n64', 'z64', 'v64', 'gcm', 'wbfs', 'cue', 'mds', 'pbp'];
+
         let combinedDB = {};
         let currentFile = null;
         let currentHash = null;
+        let currentYtId = null;
 
         const els = {
             dropZone: document.getElementById('dropZone'),
@@ -310,17 +446,17 @@
             progressBar: document.getElementById('progressBar'),
             resultArea: document.getElementById('resultArea'),
             dbStats: document.getElementById('dbStats'),
-            settingsPanel: document.getElementById('settingsPanel'),
             githubUrl: document.getElementById('githubUrl'),
-            autoSaveToggle: document.getElementById('autoSaveToggle')
+            autoSaveToggle: document.getElementById('autoSaveToggle'),
+            ytPreview: document.getElementById('ytPreview'),
+            ytThumb: document.getElementById('ytThumb'),
+            ytButtons: document.getElementById('ytButtons')
         };
 
         window.onload = () => {
-            // Load GitHub URL
             const savedUrl = localStorage.getItem('integrity_github_url');
             if (savedUrl) els.githubUrl.value = savedUrl;
 
-            // Load Auto Save Preference
             const autoSavePref = localStorage.getItem('integrity_autosave_mode') === 'true';
             els.autoSaveToggle.checked = autoSavePref;
 
@@ -328,9 +464,102 @@
             refreshDatabase();
         };
 
-        // --- AUTO SAVE LOGIC ---
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.kebab-container')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        function toggleDropdown(id) {
+            const menu = document.getElementById(id);
+            document.querySelectorAll('.dropdown-menu').forEach(d => {
+                if (d.id !== id) d.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        }
+
+        // Generic Panel Toggler
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            const allPanels = document.querySelectorAll('.side-panel');
+            
+            // Close others first
+            allPanels.forEach(p => {
+                if(p.id !== panelId) p.classList.remove('active');
+            });
+
+            panel.classList.toggle('active');
+        }
+
         function saveAutoSavePref() {
             localStorage.setItem('integrity_autosave_mode', els.autoSaveToggle.checked);
+        }
+
+        // --- YOUTUBE LOGIC (IMPROVED) ---
+        function detectYoutube(val) {
+            val = val.trim();
+            els.ytPreview.style.display = 'none';
+            currentYtId = null;
+
+            // Regex untuk ID Youtube (mendukung short, watch?v=, youtu.be)
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = val.match(regExp);
+
+            if (match && match[2].length == 11) {
+                // VIDEO DETECTED
+                currentYtId = match[2];
+                els.ytThumb.src = `https://img.youtube.com/vi/${currentYtId}/mqdefault.jpg`;
+                els.ytPreview.style.display = 'block';
+                
+                // Show Direct Actions
+                els.ytButtons.innerHTML = `
+                    <button class="btn-xs" style="background:#ff0000;" onclick="openService('youtube')">
+                        <i class="fa-brands fa-youtube"></i> Tonton
+                    </button>
+                    <button class="btn-xs" style="background:#2563eb;" onclick="openService('y2mate')">
+                        <i class="fa-solid fa-file-audio"></i> MP3 (Y2Mate)
+                    </button>
+                     <button class="btn-xs" style="background:#16a34a;" onclick="openService('savefrom')">
+                        <i class="fa-solid fa-video"></i> MP4 (SaveFrom)
+                    </button>
+                `;
+            } else {
+                // TEXT SEARCH
+                els.ytButtons.innerHTML = `
+                    <button class="btn-xs" style="background:rgba(239, 68, 68, 0.2); color:#fca5a5;" onclick="openYtTool('search')">
+                        <i class="fa-solid fa-magnifying-glass"></i> Cari di YouTube
+                    </button>
+                `;
+            }
+        }
+
+        function openService(service) {
+            if (service === 'youtube') {
+                window.open(`https://www.youtube.com/watch?v=${currentYtId}`, '_blank');
+            } else if (service === 'y2mate') {
+                window.open(`https://www.y2mate.com/youtube/${currentYtId}`, '_blank');
+            } else if (service === 'savefrom') {
+                window.open(`https://en.savefrom.net/1-youtube-video-downloader-4/`, '_blank'); 
+                // Savefrom usually requires pasting the link manually now due to API changes, but direct URL tricks exist:
+                // window.open(`https://ssyoutube.com/watch?v=${currentYtId}`, '_blank'); // Shortlink trick
+            }
+        }
+
+        function openYtTool(action) {
+            const val = document.getElementById('ytInput').value.trim();
+            if (!val) return alert("Masukkan judul lagu terlebih dahulu!");
+            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(val)}`, '_blank');
+        }
+
+        // --- MANUAL SEARCH LOGIC ---
+        function manualSearch(type) {
+            const q = document.getElementById('manualSearchInput').value.trim();
+            if(!q) return alert("Mohon isi kata kunci pencarian terlebih dahulu!");
+            
+            let suffix = type === 'emulator' ? ' emulator' : '';
+            window.open(`https://coolrom.com.au/search?q=${encodeURIComponent(q + suffix)}`, '_blank');
         }
 
         // --- DATABASE MANAGEMENT ---
@@ -351,7 +580,6 @@
             }
 
             combinedDB = { ...DEFAULT_DB, ...remoteDB, ...localDB };
-            
             const total = Object.keys(combinedDB).length;
             const localCount = Object.keys(localDB).length;
             els.dbStats.innerHTML = `<i class="fa-solid fa-database"></i> Total: ${total} (${localCount} Lokal)`;
@@ -363,7 +591,6 @@
             alert("Sinkronisasi selesai!");
         }
 
-        // Unified Add Function (Manual & Auto)
         function addToLocalDB(customName = null, customHash = null, isAuto = false) {
             const name = customName || document.getElementById('newFileName')?.value.trim();
             const hash = customHash || currentHash;
@@ -371,8 +598,6 @@
             if (!name || !hash) return alert("Nama tidak boleh kosong.");
 
             const localDB = JSON.parse(localStorage.getItem('integrity_local_db') || '{}');
-            
-            // Format nama: Jika auto, tambahkan label (Auto)
             const dbName = name + (isAuto ? " (Auto-Saved)" : " (User Verified)");
             localDB[hash] = dbName;
             
@@ -380,10 +605,9 @@
             refreshDatabase();
 
             if (isAuto) {
-                // Jika auto, langsung update UI seolah-olah verified
                 return dbName; 
             } else {
-                displayResult(hash); // Refresh UI manual
+                displayResult(hash); 
                 alert("Disimpan ke Database Lokal!");
             }
         }
@@ -408,10 +632,6 @@
             a.remove();
         }
 
-        function toggleSettings() {
-            els.settingsPanel.classList.toggle('active');
-        }
-
         // --- FILE HANDLING ---
         function initDragDrop() {
             const zone = els.dropZone;
@@ -432,7 +652,12 @@
             
             const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
             document.querySelector('.upload-icon').innerHTML = '<i class="fa-solid fa-file-circle-check"></i>';
-            els.uploadText.innerHTML = `<h3 style="color:#fff; word-break:break-all;">${file.name}</h3><p>${sizeMB} MB - Siap Scan</p>`;
+            
+            const ext = file.name.split('.').pop().toLowerCase();
+            const isGame = GAME_EXTENSIONS.includes(ext);
+            const icon = isGame ? '<i class="fa-solid fa-gamepad" style="color:#a855f7"></i> ' : '';
+
+            els.uploadText.innerHTML = `<h3 style="color:#fff; word-break:break-all;">${icon}${file.name}</h3><p>${sizeMB} MB - Siap Scan</p>`;
             els.scanBtn.disabled = false;
             els.scanBtn.innerText = "Mulai Scan Integritas";
         }
@@ -488,27 +713,67 @@
             els.resultArea.style.display = 'block';
             let match = combinedDB[hash];
 
-            // LOGIKA AUTO-SAVE
             const isAutoSave = els.autoSaveToggle.checked;
             if (!match && isAutoSave) {
-                // Simpan otomatis dan dapatkan nama
                 match = addToLocalDB(currentFile.name, hash, true);
             }
 
-            let html = '';
+            const ext = currentFile.name.split('.').pop().toLowerCase();
+            const isGame = GAME_EXTENSIONS.includes(ext);
+            const cleanName = currentFile.name.replace(/\.[^/.]+$/, "").replace(/[\[\(].*?[\]\)]/g, "").trim();
+
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                    <div>
+            `;
+
             if (match) {
-                // TERVERIFIKASI (ATAU AUTO-SAVED)
-                html = `
-                    <div class="badge success"><i class="fa-solid fa-check"></i> TERVERIFIKASI</div>
+                html += `<div class="badge success"><i class="fa-solid fa-check"></i> TERVERIFIKASI</div>`;
+            } else {
+                html += `<div class="badge warning"><i class="fa-solid fa-triangle-exclamation"></i> BELUM TERDAFTAR</div>`;
+            }
+
+            html += `
+                    </div>
+                    <div class="kebab-container">
+                        <button class="btn-kebab" onclick="toggleDropdown('resultMenu')">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="dropdown-menu" id="resultMenu">
+                            <button class="dropdown-item" onclick="copyToClipboard(this, '${hash}')">
+                                <i class="fa-regular fa-copy"></i> Salin Hash
+                            </button>
+                            <a href="https://www.virustotal.com/gui/file/${hash}" target="_blank" class="dropdown-item">
+                                <i class="fa-solid fa-shield-virus"></i> Cek VirusTotal
+                            </a>
+            `;
+
+            if (isGame) {
+                html += `
+                    <a href="https://coolrom.com.au/search?q=${encodeURIComponent(cleanName)}" target="_blank" class="dropdown-item">
+                        <i class="fa-solid fa-magnifying-glass"></i> Cari di CoolROM
+                    </a>
+                    <a href="https://www.google.com/search?q=${hash}+site:redump.org" target="_blank" class="dropdown-item">
+                        <i class="fa-solid fa-database"></i> Cek DB Redump
+                    </a>
+                `;
+            }
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (match) {
+                html += `
                     <h2 class="result-title">${match}</h2>
                     <p class="result-desc">File ini aman dan terdaftar dalam database lokal/resmi.</p>
                 `;
             } else {
-                // BELUM TERDAFTAR (Manual Mode)
-                html = `
-                    <div class="badge warning"><i class="fa-solid fa-triangle-exclamation"></i> BELUM TERDAFTAR</div>
+                html += `
                     <h2 class="result-title">File Tidak Dikenal</h2>
-                    <p class="result-desc">Hash tidak ditemukan. Aktifkan 'Auto-Simpan' di pengaturan untuk menyimpan otomatis.</p>
+                    <p class="result-desc">Hash tidak ditemukan. Simpan ke database lokal jika Anda yakin file ini aman.</p>
 
                     <div class="add-db-box">
                         <div class="add-db-title"><i class="fa-solid fa-plus-circle"></i> Tambah Manual?</div>
@@ -525,6 +790,31 @@
                     <div class="hash-display" onclick="copyToClipboard(this, '${hash}')" title="Klik Salin">${hash}</div>
                 </div>
             `;
+
+            if (isGame) {
+                 html += `
+                    <div style="margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 15px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #facc15;"><i class="fa-solid fa-gamepad"></i> Game Detected</h4>
+                        <div class="grid-btns">
+                            <a href="https://coolrom.com.au/search?q=${encodeURIComponent(cleanName)}" target="_blank" class="btn-external cr-bg">
+                                <i class="fa-solid fa-magnifying-glass"></i> CoolROM
+                            </a>
+                             <a href="https://www.google.com/search?q=${hash}+site:redump.org" target="_blank" class="btn-external" style="background: #be123c; box-shadow: 0 4px 15px rgba(190, 18, 60, 0.2);">
+                                <i class="fa-solid fa-check-double"></i> Redump
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                 html += `
+                    <div style="margin-top: 15px; padding-top: 5px;">
+                        <a href="https://www.virustotal.com/gui/file/${hash}" target="_blank" class="btn-external vt-bg">
+                            <i class="fa-solid fa-shield-virus"></i> Cek VirusTotal
+                        </a>
+                    </div>
+                `;
+            }
+            
             els.resultArea.innerHTML = html;
         }
 
